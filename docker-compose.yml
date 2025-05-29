@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8000
+    networks:
+      - netvis-network
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://netvis:secret@db:5432/netvis
+    networks:
+      - netvis-network
+
+  db:
+    image: timescale/timescaledb:latest-pg14
+    container_name: netvis-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: netvis
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: netvis
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - netvis-network
+
+volumes:
+  pgdata:
+
+networks:
+  netvis-network:
+    driver: bridge
