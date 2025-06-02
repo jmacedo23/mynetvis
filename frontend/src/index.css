@@ -13,3 +13,12 @@ body {
 #root {
     @apply h-screen w-screen overflow-hidden;
 }
+
+/* frontend/src/index.css */
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
