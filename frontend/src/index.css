@@ -1,18 +1,11 @@
-/* frontend/src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 body {
-    background-color: #111;
-    color: #ddd;
+    margin: 0;
+    background-color: black;
+    color: white;
 }
 
-.glow-dot {
-    filter: drop-shadow(0 0 6px #00f0ff) drop-shadow(0 0 10px #00f0ff);
+#cesiumContainer {
+    width: 100vw;
+    height: 100vh;
+    display: block;
 }
-
-#root {
-    height: 100%;
-}
-
