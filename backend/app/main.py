@@ -1,10 +1,18 @@
-# backend/app/main.py
-
 from fastapi import FastAPI
-from app.api import traffic, status
+from app.api import traffic
+from app.websocket import traffic_ws
+from db.init import init_db
+from db.connection import engine
 
 app = FastAPI()
 
-app.include_router(status.router, prefix="/status")
+# Initialize database on startup
+@app.on_event("startup")
+async def startup_event():
+    await init_db(engine)
+
+# REST API routes
 app.include_router(traffic.router, prefix="/traffic")
 
+# WebSocket routes
+app.include_router(traffic_ws.router)

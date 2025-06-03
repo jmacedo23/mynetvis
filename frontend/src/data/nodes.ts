@@ -1,0 +1,55 @@
+// frontend/src/data/nodes.ts
+export interface Node {
+  id: string;
+  name: string;
+  lat: number;
+  lon: number;
+  type: 'satellite' | 'ground';
+}
+export const nodes = [
+  { id: "sat-0", name: "Satellite 0", lat: 0, lon: 0, type: "satellite" },
+  { id: "sat-1", name: "Satellite 1", lat: 40, lon: 0, type: "satellite" },
+  { id: "sat-2", name: "Satellite 2", lat: 80, lon: 0, type: "satellite" },
+  { id: "sat-3", name: "Satellite 3", lat: 60, lon: 180, type: "satellite" },
+  { id: "sat-4", name: "Satellite 4", lat: 20, lon: 180, type: "satellite" },
+  { id: "sat-5", name: "Satellite 5", lat: -20, lon: 180, type: "satellite" },
+  { id: "sat-6", name: "Satellite 6", lat: -60, lon: 180, type: "satellite" },
+  { id: "sat-7", name: "Satellite 7", lat: -80, lon: 0, type: "satellite" },
+  { id: "sat-8", name: "Satellite 8", lat: -40, lon: 0, type: "satellite" },
+  { id: "sat-9", name: "Satellite 9", lat: 20, lon: 36, type: "satellite" },
+  { id: "sat-10", name: "Satellite 10", lat: 60, lon: 36, type: "satellite" },
+  { id: "sat-11", name: "Satellite 11", lat: 80, lon: -144, type: "satellite" },
+  { id: "sat-12", name: "Satellite 12", lat: 40, lon: -144, type: "satellite" },
+  { id: "sat-13", name: "Satellite 13", lat: 0, lon: -144, type: "satellite" },
+  { id: "sat-14", name: "Satellite 14", lat: -40, lon: -144, type: "satellite" },
+  { id: "sat-15", name: "Satellite 15", lat: -80, lon: -144, type: "satellite" },
+  { id: "sat-16", name: "Satellite 16", lat: -60, lon: 36, type: "satellite" },
+  { id: "sat-17", name: "Satellite 17", lat: -20, lon: 36, type: "satellite" },
+  { id: "sat-18", name: "Satellite 18", lat: 0, lon: 72, type: "satellite" },
+  { id: "sat-19", name: "Satellite 19", lat: 40, lon: 72, type: "satellite" },
+  { id: "sat-20", name: "Satellite 20", lat: 80, lon: 72, type: "satellite" },
+  { id: "sat-21", name: "Satellite 21", lat: 60, lon: -108, type: "satellite" },
+  { id: "sat-22", name: "Satellite 22", lat: 20, lon: -108, type: "satellite" },
+  { id: "sat-23", name: "Satellite 23", lat: -20, lon: -108, type: "satellite" },
+  { id: "sat-24", name: "Satellite 24", lat: -60, lon: -108, type: "satellite" },
+  { id: "sat-25", name: "Satellite 25", lat: -80, lon: 72, type: "satellite" },
+  { id: "sat-26", name: "Satellite 26", lat: -40, lon: 72, type: "satellite" },
+  { id: "sat-27", name: "Satellite 27", lat: 20, lon: 108, type: "satellite" },
+  { id: "sat-28", name: "Satellite 28", lat: 60, lon: 108, type: "satellite" },
+  { id: "sat-29", name: "Satellite 29", lat: 80, lon: -72, type: "satellite" },
+  { id: "sat-30", name: "Satellite 30", lat: 40, lon: -72, type: "satellite" },
+  { id: "sat-31", name: "Satellite 31", lat: 0, lon: -72, type: "satellite" },
+  { id: "sat-32", name: "Satellite 32", lat: -40, lon: -72, type: "satellite" },
+  { id: "sat-33", name: "Satellite 33", lat: -80, lon: -72, type: "satellite" },
+  { id: "sat-34", name: "Satellite 34", lat: -60, lon: 108, type: "satellite" },
+  { id: "sat-35", name: "Satellite 35", lat: -20, lon: 108, type: "satellite" },
+  { id: "sat-36", name: "Satellite 36", lat: 0, lon: 144, type: "satellite" },
+  { id: "sat-37", name: "Satellite 37", lat: 40, lon: 144, type: "satellite" },
+  { id: "sat-38", name: "Satellite 38", lat: 80, lon: 144, type: "satellite" },
+  { id: "sat-39", name: "Satellite 39", lat: 60, lon: -36, type: "satellite" },
+  { id: "sat-40", name: "Satellite 40", lat: 20, lon: -36, type: "satellite" },
+  { id: "sat-41", name: "Satellite 41", lat: -20, lon: -36, type: "satellite" },
+  { id: "sat-42", name: "Satellite 42", lat: -60, lon: -36, type: "satellite" },
+  { id: "sat-43", name: "Satellite 43", lat: -80, lon: 144, type: "satellite" },
+  { id: "sat-44", name: "Satellite 44", lat: -40, lon: 144, type: "satellite" },
+];
