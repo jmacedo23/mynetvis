@@ -1,18 +1,51 @@
 from fastapi import FastAPI
-from app.api import traffic
-from app.websocket import traffic_ws
-from db.init import init_db
-from db.connection import engine
+import psycopg2
+import os
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
-# Initialize database on startup
-@app.on_event("startup")
-async def startup_event():
-    await init_db(engine)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # or ["*"] to allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# REST API routes
-app.include_router(traffic.router, prefix="/traffic")
 
-# WebSocket routes
-app.include_router(traffic_ws.router)
+@app.get("/")
+def root():
+    return {"message": "NetVis API is live!"}
+
+@app.get("/satellites")
+def get_satellite_data():
+    # Connect to the TimescaleDB database
+    conn = psycopg2.connect(
+        dbname=os.getenv("POSTGRES_DB"),
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        host=os.getenv("POSTGRES_HOST"),
+        port=5432
+    )
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM satellite_positions LIMIT 10;")
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    # Convert raw tuples into dicts (optional)
+    data = [
+        {
+            "time_sec": r[0],
+            "obj_id": r[1],
+            "lat": r[2],
+            "lon": r[3],
+            "alt_km": r[4],
+        }
+        for r in rows
+    ]
+
+    return {"data": data}
