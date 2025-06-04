@@ -19,55 +19,43 @@ export default function CesiumMap() {
 
     viewer.scene.globe.enableLighting = true;
 
-    const satellites = [
-      { name: "Satellite 0", lat: 0, lon: 0, alt: 600 },
-      { name: "Satellite 1", lat: 40, lon: 0, alt: 600 },
-      { name: "Satellite 2", lat: 80, lon: 0, alt: 600 },
-      { name: "Satellite 3", lat: 60, lon: 180, alt: 600 },
-      { name: "Satellite 4", lat: 20, lon: 180, alt: 600 },
-      { name: "Satellite 5", lat: 0, lon: -180, alt: 600 },
-      { name: "Satellite 6", lat: -40, lon: -180, alt: 600 },
-      { name: "Satellite 7", lat: -80, lon: -180, alt: 600 },
-      { name: "Satellite 8", lat: -60, lon: 0, alt: 600 },
-      { name: "Satellite 9", lat: -20, lon: 0, alt: 600 },
-      { name: "Satellite 10", lat: 0, lon: 180, alt: 600 },
-      { name: "Satellite 11", lat: 40, lon: 180, alt: 600 },
-      { name: "Satellite 12", lat: 80, lon: 180, alt: 600 },
-      { name: "Satellite 13", lat: 60, lon: -180, alt: 600 },
-      { name: "Satellite 14", lat: 20, lon: -180, alt: 600 },
-      { name: "Satellite 15", lat: 0, lon: -90, alt: 600 },
-      { name: "Satellite 16", lat: 40, lon: -90, alt: 600 },
-      { name: "Satellite 17", lat: 80, lon: -90, alt: 600 },
-      { name: "Satellite 18", lat: 60, lon: 90, alt: 600 },
-      { name: "Satellite 19", lat: 20, lon: 90, alt: 600 },
-    ];
+    // ✅ Fetch satellite data from backend API
+    fetch("http://localhost:8000/satellites")
+      .then((res) => res.json())
+      .then((data) => {
+        const satellites = data.data;
 
-    satellites.forEach((sat) => {
-      viewer.entities.add({
-        name: sat.name,
-        position: Cesium.Cartesian3.fromDegrees(
-          sat.lon,
-          sat.lat,
-          sat.alt * 1000
-        ),
-        point: {
-          pixelSize: 8,
-          color: Cesium.Color.CYAN,
-          outlineColor: Cesium.Color.WHITE,
-          outlineWidth: 1,
-        },
+        satellites.forEach((sat: any, index: number) => {
+          viewer.entities.add({
+            name: `Satellite ${index}`,
+            position: Cesium.Cartesian3.fromDegrees(
+              sat.lon,
+              sat.lat,
+              sat.alt_km * 1000 // convert km to meters
+            ),
+            point: {
+              pixelSize: 8,
+              color: Cesium.Color.CYAN,
+              outlineColor: Cesium.Color.WHITE,
+              outlineWidth: 1,
+            },
+          });
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to fetch satellite data:", error);
       });
-    });
 
-
-
-      Cesium.Ion.defaultAccessToken = "";
-
-
- 
+    Cesium.Ion.defaultAccessToken = "";
 
     return () => viewer.destroy();
   }, []);
 
-  return <div id="cesiumContainer" ref={viewerRef} />;
+  return (
+    <div
+      id="cesiumContainer"
+      ref={viewerRef}
+      style={{ width: "100%", height: "100vh" }}
+    />
+  );
 }
