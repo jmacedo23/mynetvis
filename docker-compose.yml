@@ -26,8 +26,10 @@ services:
       - PYTHONPATH=/app:/database     # <-- Add PYTHONPATH so imports work
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
-  db:
-    image: timescale/timescaledb:latest-pg14
+  database:
+    build:
+      context: ./database
+    container_name: netvis-database
     ports:
       - "5432:5432"
     environment:
