@@ -1,24 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Custom global styles (optional) */
-
 body {
-    @apply bg-gray-100 text-gray-900;
     margin: 0;
-    font-family: 'Inter', sans-serif;
+    background-color: black;
+    color: white;
 }
 
-#root {
-    @apply h-screen w-screen overflow-hidden;
-}
-
-/* frontend/src/index.css */
-html,
-body,
-#root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+#cesiumContainer {
+    width: 100vw;
+    height: 100vh;
+    display: block;
 }
