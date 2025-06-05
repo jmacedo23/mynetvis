@@ -17,10 +17,13 @@ services:
     depends_on:
       - database
     environment:
-      - POSTGRES_DB=netvis
-      - POSTGRES_USER=netvis
-      - POSTGRES_PASSWORD=netvis
-      - POSTGRES_HOST=database
+        POSTGRES_HOST: database
+        POSTGRES_PORT: 5432
+        POSTGRES_DB: netvis
+        POSTGRES_USER: netvis
+        POSTGRES_PASSWORD: netvis
+
+     
 
   database:
     build:
