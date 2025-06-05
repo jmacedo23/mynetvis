@@ -1,12 +1,8 @@
-CREATE EXTENSION IF NOT EXISTS timescaledb;
-
-CREATE TABLE satellite_positions (
-  time_sec INTEGER NOT NULL,
-  obj_id INTEGER NOT NULL,
-  lat DOUBLE PRECISION,
-  lon DOUBLE PRECISION,
-  alt_km DOUBLE PRECISION,
-  PRIMARY KEY (time_sec, obj_id)
+CREATE TABLE satellite_tles (
+  satellite_id TEXT,
+  name TEXT,
+  tle_line1 TEXT,
+  tle_line2 TEXT,
+  epoch TIMESTAMPTZ,
+  PRIMARY KEY (satellite_id, epoch)
 );
-
-SELECT create_hypertable('satellite_positions', 'time_sec');
