@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import { useEffect, useRef } from "react";
-import * as Cesium from "cesium";
+import * as Cesium from "cesium/Cesium";
 import "cesium/Widgets/widgets.css";
 
 export default function CesiumMap() {
@@ -19,6 +19,29 @@ export default function CesiumMap() {
     fetch(`${getApiBase()}/satellites/paths`)
       .then((res) => res.json())
       .then((data) => {
+        console.log("Sat count:", data.length);
+        console.log("First sat:", data[0]);
+        console.log("First path length:", data[0]?.path?.length);
+        console.log("Satellite data:", data); 
+        if (data.length && data[0].path.length && viewer.current) {
+          const startTime = Cesium.JulianDate.fromDate(
+            new Date(data[0].path[0].timestamp)
+          );
+          const stopTime = Cesium.JulianDate.fromDate(
+            new Date(data[0].path.slice(-1)[0].timestamp)
+          );
+
+          viewer.current.clock.startTime = startTime.clone();
+          viewer.current.clock.stopTime = stopTime.clone();
+          viewer.current.clock.currentTime = startTime.clone();
+          viewer.current.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+          viewer.current.clock.multiplier = 10;
+
+          if (viewer.current.timeline) {
+            viewer.current.timeline.zoomTo(startTime, stopTime);
+          }
+        }
+
         data.forEach((sat: any) => {
           const position = new Cesium.SampledPositionProperty();
 
@@ -64,13 +87,23 @@ export default function CesiumMap() {
             satelliteEntities.current[sat.satellite_id] = entity!;
           }
         });
+        setTimeout(() => {
+  if (viewer.current && viewer.current.entities.values.length > 0) {
+    viewer.current.zoomTo(viewer.current.entities);
+  }
+}, 1000);
+
+        // 🛰 Optional: zoom camera to all entities
+        viewer.current?.zoomTo(viewer.current.entities);
       })
       .catch((err) => console.error("TLE fetch error", err));
   };
 
+
   useEffect(() => {
     if (!viewerRef.current) return;
 
+    // 🪐 Create viewer
     viewer.current = new Cesium.Viewer(viewerRef.current, {
       shouldAnimate: true,
       timeline: true,
@@ -80,17 +113,39 @@ export default function CesiumMap() {
       sceneModePicker: false,
     });
 
+    // 🌍 Enable globe lighting
     viewer.current.scene.globe.enableLighting = true;
-    viewer.current.clock.shouldAnimate = true;
-    viewer.current.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER;
-    viewer.current.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
-    viewer.current.clock.multiplier = 10;
 
+    // ⏱ Sync Cesium clock with satellite timestamps
+    const startDate = new Date();
+    const stopDate = new Date(startDate.getTime() + 6 * 60 * 1000); // 6 minutes
+
+    const start = Cesium.JulianDate.fromDate(startDate);
+    const stop = Cesium.JulianDate.fromDate(stopDate);
+
+    const clock = viewer.current.clock;
+    clock.startTime = start.clone();
+    clock.stopTime = stop.clone();
+    clock.currentTime = start.clone();
+    clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+    clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+    clock.multiplier = 10;
+    clock.shouldAnimate = true;
+
+    viewer.current.timeline.zoomTo(start, stop);
+
+    // 🛰 Load satellites
     updateSatellites();
 
-    const interval = setInterval(updateSatellites, 60_000);
-    return () => clearInterval(interval);
+    // 🔁 Periodic update
+    const interval = setInterval(updateSatellites, 60000);
+
+    return () => {
+      clearInterval(interval);
+      viewer.current?.destroy();
+    };
   }, []);
+
 
   return <div ref={viewerRef} style={{ width: "100%", height: "100vh" }} />;
 }
