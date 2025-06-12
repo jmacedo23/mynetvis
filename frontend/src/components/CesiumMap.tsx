@@ -106,8 +106,8 @@ export default function CesiumMap() {
     // 🪐 Create viewer
     viewer.current = new Cesium.Viewer(viewerRef.current, {
       shouldAnimate: true,
-      timeline: true,
-      animation: true,
+      timeline: false,
+      animation: false,
       baseLayerPicker: false,
       geocoder: false,
       sceneModePicker: false,
@@ -132,7 +132,9 @@ export default function CesiumMap() {
     clock.multiplier = 10;
     clock.shouldAnimate = true;
 
-    viewer.current.timeline.zoomTo(start, stop);
+    if (viewer.current.timeline) {
+      viewer.current.timeline.zoomTo(start, stop);
+    }
 
     // 🛰 Load satellites
     updateSatellites();
