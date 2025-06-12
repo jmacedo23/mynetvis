@@ -1,4 +1,8 @@
-from .fetch import fetch_and_store_tles
+try:
+    from .fetch import fetch_and_store_tles
+except ImportError:
+    # Fallback when executed as a script without a package context
+    from fetch import fetch_and_store_tles
 import time
 
 if __name__ == "__main__":
