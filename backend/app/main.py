@@ -7,18 +7,8 @@ import os
 from skyfield.api import EarthSatellite, load
 from sgp4.api import Satrec, jday
 
-from app.tle.fetch import fetch_and_store_tles
-
 app = FastAPI()
 
-@app.on_event("startup")
-async def startup_event():
-    fetch_and_store_tles()
-
-@app.get("/api/update-tles")
-def manual_tle_update():
-    fetch_and_store_tles()
-    return {"status": "TLEs updated"}
 
 app.add_middleware(
     CORSMiddleware,
