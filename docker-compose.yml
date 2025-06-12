@@ -8,6 +8,7 @@ services:
       - "3000:3000"
     working_dir: /app
     container_name: netvis-frontend
+
   backend:
     build:
       context: ./backend
@@ -17,13 +18,24 @@ services:
     depends_on:
       - database
     environment:
-        POSTGRES_HOST: database
-        POSTGRES_PORT: 5432
-        POSTGRES_DB: netvis
-        POSTGRES_USER: netvis
-        POSTGRES_PASSWORD: netvis
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: netvis
+      POSTGRES_USER: netvis
+      POSTGRES_PASSWORD: netvis
 
-     
+  generator:
+    build:
+      context: ./generator
+    container_name: netvis-generator
+    depends_on:
+      - database
+    environment:
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: netvis
+      POSTGRES_USER: netvis
+      POSTGRES_PASSWORD: netvis
 
   database:
     build:
