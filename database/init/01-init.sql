@@ -11,3 +11,11 @@ CREATE TABLE IF NOT EXISTS satellite_tles (
 );
 
 SELECT create_hypertable('satellite_tles', 'epoch', if_not_exists => TRUE);
+
+-- Ground station locations
+CREATE TABLE IF NOT EXISTS ground_stations (
+  id SERIAL PRIMARY KEY,
+  name TEXT UNIQUE,
+  lat DOUBLE PRECISION,
+  lon DOUBLE PRECISION
+);
