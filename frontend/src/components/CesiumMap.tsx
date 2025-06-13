@@ -7,6 +7,7 @@ export default function CesiumMap() {
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const viewer = useRef<Cesium.Viewer | null>(null);
   const satelliteEntities = useRef<{ [id: string]: Cesium.Entity }>({});
+  const groundEntities = useRef<Cesium.Entity[]>([]);
 
   const getApiBase = () => {
     const { hostname } = window.location;
@@ -99,6 +100,35 @@ export default function CesiumMap() {
       .catch((err) => console.error("TLE fetch error", err));
   };
 
+  const loadGroundStations = () => {
+    fetch(`${getApiBase()}/ground-stations`)
+      .then((res) => res.json())
+      .then((data) => {
+        data.forEach((gs: any) => {
+          const entity = viewer.current?.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(gs.lon, gs.lat, 0),
+            point: {
+              pixelSize: 8,
+              color: Cesium.Color.RED,
+            },
+            label: {
+              text: gs.name,
+              font: "12px sans-serif",
+              fillColor: Cesium.Color.WHITE,
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+              outlineWidth: 2,
+              verticalOrigin: Cesium.VerticalOrigin.TOP,
+              pixelOffset: new Cesium.Cartesian2(0, -20),
+            },
+          });
+          if (entity) {
+            groundEntities.current.push(entity);
+          }
+        });
+      })
+      .catch((err) => console.error("Ground station fetch error", err));
+  };
+
 
   useEffect(() => {
     if (!viewerRef.current) return;
@@ -138,6 +168,7 @@ export default function CesiumMap() {
 
     // 🛰 Load satellites
     updateSatellites();
+    loadGroundStations();
 
     // 🔁 Periodic update
     const interval = setInterval(updateSatellites, 60000);

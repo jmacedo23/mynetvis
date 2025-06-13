@@ -117,3 +117,22 @@ def get_satellite_paths():
             continue
 
     return satellites
+
+@app.get("/ground-stations")
+def get_ground_stations():
+    conn = psycopg2.connect(
+        dbname=os.getenv("POSTGRES_DB"),
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        host=os.getenv("POSTGRES_HOST"),
+        port=5432,
+    )
+    cur = conn.cursor()
+    cur.execute("SELECT name, lat, lon FROM ground_stations;")
+    stations = [
+        {"name": name, "lat": lat, "lon": lon}
+        for name, lat, lon in cur.fetchall()
+    ]
+    cur.close()
+    conn.close()
+    return stations
