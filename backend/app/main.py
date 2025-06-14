@@ -88,6 +88,8 @@ def get_satellite_paths():
     conn.close()
 
     now = datetime.utcnow()
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = start_of_day + timedelta(days=1)
     satellites = []
 
     for satellite_id, name, tle1, tle2 in results:
@@ -95,8 +97,9 @@ def get_satellite_paths():
             sat = Satrec.twoline2rv(tle1, tle2)
             path = []
 
-            for t in range(0, 301, 10):  # every 10 sec for 5 minutes
-                dt = now + timedelta(seconds=t)
+            total_seconds = int((end_of_day - start_of_day).total_seconds())
+            for t in range(0, total_seconds + 1, 60):  # every 1 min for 24 hours
+                dt = start_of_day + timedelta(seconds=t)
                 jd, fr = jday(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
                 err, pos, _ = sat.sgp4(jd, fr)
                 if err == 0:

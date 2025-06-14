@@ -35,8 +35,9 @@ export default function CesiumMap() {
 
           if (firstLoad.current) {
             viewer.current.clock.startTime = startTime.clone();
+            viewer.current.clock.stopTime = stopTime.clone();
             viewer.current.clock.currentTime = startTime.clone();
-            viewer.current.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
+            viewer.current.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
             viewer.current.clock.multiplier = 10;
 
             if (viewer.current.timeline) {
@@ -146,7 +147,8 @@ export default function CesiumMap() {
 
     // ⏱ Sync Cesium clock with satellite timestamps
     const startDate = new Date();
-    const stopDate = new Date(startDate.getTime() + 6 * 60 * 1000); // 6 minutes
+    startDate.setUTCHours(0, 0, 0, 0);
+    const stopDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000); // 24 hours
 
     const start = Cesium.JulianDate.fromDate(startDate);
     const stop = Cesium.JulianDate.fromDate(stopDate);
