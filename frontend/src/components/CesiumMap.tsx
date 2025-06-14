@@ -8,6 +8,7 @@ export default function CesiumMap() {
   const viewer = useRef<Cesium.Viewer | null>(null);
   const satelliteEntities = useRef<{ [id: string]: Cesium.Entity }>({});
   const groundEntities = useRef<Cesium.Entity[]>([]);
+  const firstLoad = useRef<boolean>(true);
 
   const getApiBase = () => {
     const { hostname } = window.location;
@@ -32,14 +33,18 @@ export default function CesiumMap() {
             new Date(data[0].path.slice(-1)[0].timestamp)
           );
 
-          viewer.current.clock.startTime = startTime.clone();
-          viewer.current.clock.stopTime = stopTime.clone();
-          viewer.current.clock.currentTime = startTime.clone();
-          viewer.current.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
-          viewer.current.clock.multiplier = 10;
+          if (firstLoad.current) {
+            viewer.current.clock.startTime = startTime.clone();
+            viewer.current.clock.stopTime = stopTime.clone();
+            viewer.current.clock.currentTime = startTime.clone();
+            viewer.current.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+            viewer.current.clock.multiplier = 10;
 
-          if (viewer.current.timeline) {
-            viewer.current.timeline.zoomTo(startTime, stopTime);
+            if (viewer.current.timeline) {
+              viewer.current.timeline.zoomTo(startTime, stopTime);
+            }
+          } else {
+            viewer.current.clock.stopTime = stopTime.clone();
           }
         }
 
@@ -78,24 +83,16 @@ export default function CesiumMap() {
                 pixelOffset: new Cesium.Cartesian2(0, -20),
               },
               path: {
-                show: true,
-                leadTime: 60,
-                trailTime: 60,
-                width: 2,
-                material: Cesium.Color.YELLOW.withAlpha(0.4),
+                show: false,
               },
             });
             satelliteEntities.current[sat.satellite_id] = entity!;
           }
         });
-        setTimeout(() => {
-  if (viewer.current && viewer.current.entities.values.length > 0) {
-    viewer.current.zoomTo(viewer.current.entities);
-  }
-}, 1000);
-
-        // 🛰 Optional: zoom camera to all entities
-        viewer.current?.zoomTo(viewer.current.entities);
+        if (firstLoad.current && viewer.current?.entities.values.length > 0) {
+          viewer.current.zoomTo(viewer.current.entities);
+          firstLoad.current = false;
+        }
       })
       .catch((err) => console.error("TLE fetch error", err));
   };
