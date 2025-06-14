@@ -37,20 +37,27 @@ export default function CesiumMap() {
             viewer.current.clock.startTime = startTime.clone();
             viewer.current.clock.stopTime = stopTime.clone();
             viewer.current.clock.currentTime = startTime.clone();
-            viewer.current.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+            viewer.current.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
             viewer.current.clock.multiplier = 10;
 
             if (viewer.current.timeline) {
               viewer.current.timeline.zoomTo(startTime, stopTime);
             }
           } else {
-            // Keep the Cesium clock in sync with the latest satellite path
-            viewer.current.clock.startTime = startTime.clone();
-            viewer.current.clock.stopTime = stopTime.clone();
-            viewer.current.clock.currentTime = startTime.clone();
-
-            if (viewer.current.timeline) {
-              viewer.current.timeline.zoomTo(startTime, stopTime);
+            // Extend the stop time without resetting the clock
+            if (
+              Cesium.JulianDate.greaterThan(
+                stopTime,
+                viewer.current.clock.stopTime
+              )
+            ) {
+              viewer.current.clock.stopTime = stopTime.clone();
+              if (viewer.current.timeline) {
+                viewer.current.timeline.zoomTo(
+                  viewer.current.clock.startTime,
+                  stopTime
+                );
+              }
             }
           }
         }
@@ -161,7 +168,7 @@ export default function CesiumMap() {
     clock.startTime = start.clone();
     clock.stopTime = stop.clone();
     clock.currentTime = start.clone();
-    clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+    clock.clockRange = Cesium.ClockRange.UNBOUNDED;
     clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER;
     clock.multiplier = 10;
     clock.shouldAnimate = true;
