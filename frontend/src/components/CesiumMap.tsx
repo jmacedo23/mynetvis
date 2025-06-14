@@ -44,7 +44,14 @@ export default function CesiumMap() {
               viewer.current.timeline.zoomTo(startTime, stopTime);
             }
           } else {
+            // Keep the Cesium clock in sync with the latest satellite path
+            viewer.current.clock.startTime = startTime.clone();
             viewer.current.clock.stopTime = stopTime.clone();
+            viewer.current.clock.currentTime = startTime.clone();
+
+            if (viewer.current.timeline) {
+              viewer.current.timeline.zoomTo(startTime, stopTime);
+            }
           }
         }
 
