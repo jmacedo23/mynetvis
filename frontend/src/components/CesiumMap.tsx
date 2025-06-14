@@ -35,19 +35,9 @@ export default function CesiumMap() {
 
           if (firstLoad.current) {
             viewer.current.clock.startTime = startTime.clone();
-            viewer.current.clock.stopTime = stopTime.clone();
             viewer.current.clock.currentTime = startTime.clone();
-            viewer.current.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+            viewer.current.clock.clockRange = Cesium.ClockRange.UNBOUNDED;
             viewer.current.clock.multiplier = 10;
-
-            if (viewer.current.timeline) {
-              viewer.current.timeline.zoomTo(startTime, stopTime);
-            }
-          } else {
-            // Keep the Cesium clock in sync with the latest satellite path
-            viewer.current.clock.startTime = startTime.clone();
-            viewer.current.clock.stopTime = stopTime.clone();
-            viewer.current.clock.currentTime = startTime.clone();
 
             if (viewer.current.timeline) {
               viewer.current.timeline.zoomTo(startTime, stopTime);
@@ -57,6 +47,10 @@ export default function CesiumMap() {
 
         data.forEach((sat: any) => {
           const position = new Cesium.SampledPositionProperty();
+          position.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD;
+          position.forwardExtrapolationDuration = Infinity;
+          position.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD;
+          position.backwardExtrapolationDuration = Infinity;
 
           sat.path.forEach((point: any) => {
             const time = Cesium.JulianDate.fromDate(new Date(point.timestamp));
